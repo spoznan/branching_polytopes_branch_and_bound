@@ -1,9 +1,13 @@
-from bb_algorithms import *
-from bb_merge_alg import *
+import time
+timing_data = open("time_data.txt","a")
+timing_data.write("Started bb_main at " + str(time.strftime("%H:%M:%S, %D", time.localtime())))
+timing_data.close()
+
+exec(open("./Code/bb_algorithms.py").read())
+exec(open("./Code/bb_merge_alg.py").read())
 exec(open("./Code/rna_poly.py").read())
 
-
-seq_list = "Max_Accuracy.txt" #needs to be changed
+seq_list = "MaxAccuracyFiles/tRNA.txt" #needs to be changed
 
 ## Initializes Data files
 PolytopeList = InitializePolytopes(seq_list)
@@ -106,11 +110,16 @@ for i in Considering:
               PolytopeList, Slices, AccuracyData, L, u, betterAccPrune)
         
 
-while (len(Considering) > 8):
+while (len(Considering) > 2):
     x = Considering.pop(0)
     y = Considering.pop(0)
     z = x + "," + y
-    Merge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
+    if (len(z.split(",")) >= 10):
+        NewMerge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
+          "MergeData/" + z + ".txt",
+          PolytopeList, Slices, AccuracyData, L, u, betterAccPrune)
+    else:
+        Merge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
           "MergeData/" + z + ".txt",
           PolytopeList, Slices, AccuracyData, L, u, betterAccPrune)
     Considering.append(z)
@@ -118,20 +127,9 @@ while (len(Considering) > 8):
 AccSort("MergeData/" + Considering[0] + ".txt", "MergeData/S" + Considering[0] + ".txt", AccuracyData)
 AccSort("MergeData/" + Considering[1] + ".txt", "MergeData/S" + Considering[1] + ".txt", AccuracyData)
 
+FinalMerge("MergeData/S" + Considering[0] + ".txt", "MergeData/S" + Considering[1] + ".txt",
+           "MergeData/FinalOutput.txt", PolytopeList, Slices, AccuracyData, NameData, L)
 
-## indication of which two branches are merged in the last step
-## if run on 100 sequences
-x="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49"
-y="50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99"
-RelevantIndices1 = [50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99]
-RRelevantIndices2 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49]
-
-##if run on 50 sequences
-## x="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24"
-## y ="25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49"
-## RelevantIndices1 = [25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49]
-## RelevantIndices2 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-
-FinalMerge( "MergeData/FinalInput.txt", "MergeData/S" + x + ".txt",  "MergeData/FinalOutput.txt", PolytopeList, Slices, AccuracyData, NameData, L, "Lfile.txt", RelevantIndices1, RelevantIndices2)
-
-           
+timing_data = open("time_data.txt","a")
+timing_data.write("Finished bb_main at " + str(time.strftime("%H:%M:%S, %D", time.localtime())))
+timing_data.close()

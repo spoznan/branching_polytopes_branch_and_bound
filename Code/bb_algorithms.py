@@ -11,15 +11,6 @@ import subprocess
 import csv
 import os
 
-
-# I don't think we need this, so I am commenting it out for now
-#def avg(LIST): ## Computes average of a list
-#    Sum = 0
-#    for i in LIST:
-#        Sum += i
-#    Avg = Sum / len(LIST)
-#    return Avg
-
 ## Reads in max accuracy data for sequences 
 def FindBounds(AccuracyValuesFileName):
     ## AccuracyValuesFileName.txt format:

@@ -102,6 +102,127 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
     
     return
 
+def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyData, L, u, betterAccPrune):
+    NSequences = len(PolytopeList)
+    ThrownOutForAccuracy = 0
+    ThrownOutForNonIntersect = 0
+
+    ## Reads in raw data
+    infile1 = open(infile1name,"r")
+    infile1data = infile1.readlines()
+    infile1.close()
+    ConsideringIntersections1 = []
+    
+    infile2 = open(infile2name,"r")
+    infile2data = infile2.readlines()
+    infile2.close()
+    ConsideringIntersections2 = []
+
+    ## Converts raw data to a list
+    for i in infile1data:
+        ConsideringIntersections1.append(eval(i.strip()))
+    for i in infile2data:
+        ConsideringIntersections2.append(eval(i.strip()))
+
+    ## Finds relevant indices for each set
+    infile1nameprocess = infile1name.split(".")[0].split("/")[1]
+    RelevantIndices1 = infile1nameprocess.split(",")
+    for i in range(len(RelevantIndices1)):
+        RelevantIndices1[i] = eval(RelevantIndices1[i])
+    
+    infile2nameprocess = infile2name.split(".")[0].split("/")[1]
+    RelevantIndices2 = infile2nameprocess.split(",")
+    for i in range(len(RelevantIndices2)):
+        RelevantIndices2[i] = eval(RelevantIndices2[i])
+
+    ARegions = []
+    for i in range(len(ConsideringIntersections1[0])):
+        ARegions.append([])
+        for j in ConsideringIntersections1:
+            if (not j[i] in ARegions[i]):
+                ARegions[i].append(j[i])
+    BRegions = []
+    for i in range(len(ConsideringIntersections2[0])):
+        BRegions.append([])
+        for j in ConsideringIntersections2:
+            if (not j[i] in BRegions[i]):
+                BRegions[i].append(j[i])
+
+    NTrue = 0 #Empty
+    NFalse = 0 #Non-empty
+    ## Empty reads true
+    ## Non-empty reads false
+    global IntersectionMatrix
+    IntersectionMatrix = []
+    for m in range(len(ARegions)): # Sequence Number (m) of File A
+        IntersectionMatrix.append({})
+        for i in ARegions[m]: # Region Number (i) of Sequence m of File A
+            z = Slices[RelevantIndices1[m]][i]
+            IntersectionMatrix[m][i] = []
+            for j in range(len(BRegions)): # Sequence Number (j) of File B
+                IntersectionMatrix[m][i].append({})
+                for k in BRegions[j]: # Region Number (k) of Sequence j of File B
+                    IntersectionMatrix[m][i][j][k] = z.intersection(Slices[RelevantIndices2[j]][k]).is_empty()
+                    if (IntersectionMatrix[m][i][j][k]):
+                        NTrue += 1
+                    else:
+                        NFalse += 1
+
+    ## Calculates Main
+    FinalIntersections = []
+    for x in range(len(ConsideringIntersections1)):
+        for y in range(len(ConsideringIntersections2)):
+            print(ConsideringIntersections1[x], ConsideringIntersections2[y])
+            ## Checks to see if the two regions being considered intersect
+            if (intersects(ConsideringIntersections1[x], ConsideringIntersections2[y])):
+                z = Slices[RelevantIndices1[0]][ConsideringIntersections1[x][0]]
+                for k in range(1, len(ConsideringIntersections1[x])):
+                    z = z.intersection(Slices[RelevantIndices1[k]][ConsideringIntersections1[x][k]])
+                for k in range(0, len(ConsideringIntersections2[y])):
+                    z = z.intersection(Slices[RelevantIndices2[k]][ConsideringIntersections2[y][k]])
+                if (not z.is_empty()):
+                    ## Starts accuracy sum for the best possible accuracy for all polytopes not currently being considered
+                    AccSum = 0
+                    for i in range(NSequences):
+                        if (RelevantIndices1.count(i) == 0 and RelevantIndices2.count(i) == 0):
+                            Min1 = min(betterAccPrune[ SN ][ ConsideringIntersections1[x][RelevantIndices1.index(SN)]][ i ] for SN in RelevantIndices1)
+                            Min2 = min(betterAccPrune[ SN ][ ConsideringIntersections2[y][RelevantIndices2.index(SN)]][ i ] for SN in RelevantIndices2)
+                            AccSum += min(Min1, Min2)
+                            print(u[i], min(Min1, Min2))
+                    ## Adds the accuracy of the 1st region
+                    for i in range(len(RelevantIndices1)):
+                        AccSum += AccuracyData[RelevantIndices1[i]][ConsideringIntersections1[x][i]]
+                    ## Adds the accuracy of the 2nd region
+                    for i in range(len(RelevantIndices2)):
+                        AccSum += AccuracyData[RelevantIndices2[i]][ConsideringIntersections2[y][i]]
+                    ## Only continues to consider the region if it meets the accuracy threshold
+                    if (AccSum > L * NSequences):
+                        FinalIntersections.append(ConsideringIntersections1[x] + ConsideringIntersections2[y])
+                        print(ConsideringIntersections1[x] + ConsideringIntersections2[y])
+                    else:
+                        ThrownOutForAccuracy += 1
+                else:
+                    ThrownOutForNonIntersect += 1
+            else:
+                ThrownOutForNonIntersect += 1
+    
+    ## Prints out combined data
+    outfile = open(outfilename,"w")
+    for i in FinalIntersections:
+        outfile.write(str(i))
+        outfile.write("\n")
+    outfile.close()
+
+    ## Prints out summative data
+    outfile = open("MergeData/SummativeData.txt", "a")
+    outfile.write(infile1name + " and " + infile2name + "\n")
+    outfile.write("Thrown out for Accuracy: " + str(ThrownOutForAccuracy) + "\n")
+    outfile.write("Thrown out for Non-Intersect: " + str(ThrownOutForNonIntersect) + "\n")
+    outfile.write("Length of join: " + str(len(FinalIntersections)) + "\n\n\n")
+    outfile.close()
+    
+    return
+
 def AccSort(infilename, outfilename, AccuracyData):
     infile = open(infilename, "r")
     infiledata = infile.readlines()
@@ -168,38 +289,6 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
     for i in infile2data:
         AccuracyIntersections2.append(eval(i.strip().split(" = ")[0]))
     print("AccuracyIntersections 2 generated")
-
-    ## Finds relevant indices for each set
-    #infile1nameprocess = infile1name.split(".")[0].split("/")[1]
-    #RelevantIndices1 = infile1nameprocess.split(",")
-    #RelevantIndices1[0] = 0
-    #for i in range(1, len(RelevantIndices1)):
-    #    RelevantIndices1[i] = eval(RelevantIndices1[i])
-    #print("Indices 1 generated")
-    
-    #infile2nameprocess = infile2name.split(".")[0].split("/")[1]
-    #RelevantIndices2 = infile2nameprocess.split(",")
-    #RelevantIndices2[0] = 1
-    #for i in range(1, len(RelevantIndices2)):
-    #    RelevantIndices2[i] = eval(RelevantIndices2[i])
-    #print("Indices 2 generated")
-
-    ## Creates Polytope Data
-    #PolytopeList1 = []
-    #for i in range(len(ConsideringIntersections1)):
-    #    z = Slices[RelevantIndices1[0]][ConsideringIntersections1[i][0]]
-    #    for j in range(1,len(ConsideringIntersections1[i])):
-    #        z = z.intersection(Slices[RelevantIndices1[j]][ConsideringIntersections1[i][j]])
-    #    PolytopeList1.append(z)
-    #print("Polytopes 1 generated")
-
-    #PolytopeList2 = []
-    #for i in range(len(ConsideringIntersections2)):
-    #    z = Slices[RelevantIndices2[0]][ConsideringIntersections2[i][0]]
-    #    for j in range(1,len(ConsideringIntersections2[i])):
-    #        z = z.intersection(Slices[RelevantIndices2[j]][ConsideringIntersections2[i][j]])
-    #    PolytopeList2.append(z)
-    #print("Polytopes 2 generated")
 
     ARegions = []
     for i in range(len(ConsideringIntersections1[0])):
@@ -293,23 +382,12 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
                     print(CurrentBest)
                     needsUpdate = True
                     break
-
-            #if (not z.intersection(PolytopeList2[j]).is_empty()):
-            #    L = (AccuracyIntersections1[i] + AccuracyIntersections2[j]) / NSequences
-            #    print(L)
-            #    CurrentBest = (ConsideringIntersections1[i], ConsideringIntersections2[j], i, j)
-            #    print(CurrentBest)
-            #    needsUpdate = True
-            #    break
             j += 1
         i += 1
     outfile = open(outfilename, "w")
     outfile.write("Accuracy: "  + str(L) + "\n")
     outfile.write(str(CurrentBest) + "\n")
     R = CurrentBest[0] + CurrentBest[1]
-    #S = []
-    #for i in range(NSequences):
-    #    S.append(i)
     S = RelevantIndices1 + RelevantIndices2
     Region = Polyhedron(lines = [(1,0,0),(0,1,0),(0,0,1)])
     for i in range(0,NSequences):
