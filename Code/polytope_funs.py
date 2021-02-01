@@ -1,4 +1,3 @@
-exec(open("rna_poly.py").read())
 from fractions import Fraction
 from collections import defaultdict
 

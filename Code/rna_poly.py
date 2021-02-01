@@ -24,7 +24,7 @@ class RNAPolytope(Polyhedron_QQ_ppl):
         parent = Polyhedra(QQ, len(points[0].vector))
 
         vertex_list = [point.vector for point in points]
-        super(RNAPolytope, self).__init__(parent, [vertex_list, None, None], None)
+        super(RNAPolytope, self).__init__(parent, [vertex_list, [], []], None)
 
         structure_dict = {tuple(map(QQ, point.vector)): point.structure for point in points}
         self._structures = structure_dict

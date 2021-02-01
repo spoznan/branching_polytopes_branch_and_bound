@@ -1,12 +1,5 @@
 #Behind the scene functions and algorithms for bb_main.sage
 
-from rna_poly import *
-from polytope_funs import *
-from SuboptFile import *
-from NopctFile import *
-from accuracy_analysis import *
-from FilenameToAccessionNumberTools import *
-
 import subprocess
 import csv
 import os
@@ -36,11 +29,11 @@ def InitializePolytopes(AccuracyValuesFileName):
     PolytopeList = []
     for i in RawData:
         if i.startswith("d.5"):
-            print("/projects/rna/rnatope/Data/5S_50/rnapoly/" + i.split(" = ")[0] + ".rnapoly")
+            #print("/projects/rna/rnatope/Data/5S_50/rnapoly/" + i.split(" = ")[0] + ".rnapoly")
             x = RNAPolytope.construct_from_file("./Data/5S_50/rnapoly/" + i.split(" = ")[0] + ".rnapoly")
             PolytopeList.append(x)
         else:
-            print("/projects/rna/rnatope/Data/tRNA_50/rnapoly/" + i.split(" = ")[0] + ".rnapoly")
+            #print("/projects/rna/rnatope/Data/tRNA_50/rnapoly/" + i.split(" = ")[0] + ".rnapoly")
             x = RNAPolytope.construct_from_file("./Data/tRNA_50/rnapoly/" + i.split(" = ")[0] + ".rnapoly")
             PolytopeList.append(x)
 
@@ -90,22 +83,22 @@ def AccuracyOf(d1Slice, PolytopeName):
         rnasuboptfile = "./Data/5S_50/optimal_all_vertices/" + PolytopeName + "/"
     else:
         rnasuboptfile = "./Data/tRNA_50/optimal_all_vertices/" + PolytopeName + "/"
-    print(slice_center(d1Slice))
-    print(d1Slice.vertices())
+    #print(slice_center(d1Slice))
+    #print(d1Slice.vertices())
     try:
-        rnasuboptfile += str(slice_center(d1Slice)[0]).split("/")[0] + ":" + str(slice_center(d1Slice)[0]).split("/")[1] + "_"
+        rnasuboptfile += str(slice_center(d1Slice)[0]).split("/")[0] + "." + str(slice_center(d1Slice)[0]).split("/")[1] + "_"
     except:
         rnasuboptfile += str(slice_center(d1Slice)[0]) + "_"
     try:
-        rnasuboptfile += str(slice_center(d1Slice)[1]).split("/")[0] + ":" + str(slice_center(d1Slice)[1]).split("/")[1] + "_"
+        rnasuboptfile += str(slice_center(d1Slice)[1]).split("/")[0] + "." + str(slice_center(d1Slice)[1]).split("/")[1] + "_"
     except:
         rnasuboptfile += str(slice_center(d1Slice)[1]) + "_"
     try:
-        rnasuboptfile += str(slice_center(d1Slice)[2]).split("/")[0] + ":" + str(slice_center(d1Slice)[2]).split("/")[1]
+        rnasuboptfile += str(slice_center(d1Slice)[2]).split("/")[0] + "." + str(slice_center(d1Slice)[2]).split("/")[1]
     except:
         rnasuboptfile += str(slice_center(d1Slice)[2])
     rnasuboptfile += ".rnasubopt"
-    print(rnasuboptfile)
+    #print(rnasuboptfile)
     F_avg = compute_slice_accuracy(rnasuboptfile, PolytopeName)
     return F_avg
 

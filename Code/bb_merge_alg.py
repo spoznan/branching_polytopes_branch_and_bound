@@ -1,5 +1,3 @@
-from bb_algorithms import *
-
 ## Takes infile1name and infile2name and merges them into outfilename
 ## Takes L and u as arguments
 ## infile1name is of the form "MergeData/x,y,...,z.txt" and has the considering combinations of
@@ -58,8 +56,9 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
     ## Calculates Main
     FinalIntersections = []
     for x in range(len(PolytopeList1)):
+        if (x % 100 == 0):
+            print("Starting region", x, "of", len(PolytopeList1))
         for y in range(len(PolytopeList2)):
-            print(ConsideringIntersections1[x], ConsideringIntersections2[y])
             ## Checks to see if the two regions being considered intersect
             if (not PolytopeList1[x].intersection(PolytopeList2[y]).is_empty()):
                 ## Starts accuracy sum for the best possible accuracy for all polytopes not currently being considered
@@ -69,7 +68,6 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
                         Min1 = min(betterAccPrune[ SN ][ ConsideringIntersections1[x][RelevantIndices1.index(SN)]][ i ] for SN in RelevantIndices1)
                         Min2 = min(betterAccPrune[ SN ][ ConsideringIntersections2[y][RelevantIndices2.index(SN)]][ i ] for SN in RelevantIndices2)
                         AccSum += min(Min1, Min2)
-                        print(u[i], min(Min1, Min2))
                 ## Adds the accuracy of the 1st region
                 for i in range(len(RelevantIndices1)):
                     AccSum += AccuracyData[RelevantIndices1[i]][ConsideringIntersections1[x][i]]
@@ -79,7 +77,6 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
                 ## Only continues to consider the region if it meets the accuracy threshold
                 if (AccSum > L * NSequences):
                     FinalIntersections.append(ConsideringIntersections1[x] + ConsideringIntersections2[y])
-                    print(ConsideringIntersections1[x] + ConsideringIntersections2[y])
                 else:
                     ThrownOutForAccuracy += 1
             else:
@@ -171,8 +168,9 @@ def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accura
     ## Calculates Main
     FinalIntersections = []
     for x in range(len(ConsideringIntersections1)):
+        if (x % 100 == 0):
+            print("Starting region", x, "of", len(ConsideringIntersections1))
         for y in range(len(ConsideringIntersections2)):
-            print(ConsideringIntersections1[x], ConsideringIntersections2[y])
             ## Checks to see if the two regions being considered intersect
             if (intersects(ConsideringIntersections1[x], ConsideringIntersections2[y])):
                 z = Slices[RelevantIndices1[0]][ConsideringIntersections1[x][0]]
@@ -188,7 +186,6 @@ def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accura
                             Min1 = min(betterAccPrune[ SN ][ ConsideringIntersections1[x][RelevantIndices1.index(SN)]][ i ] for SN in RelevantIndices1)
                             Min2 = min(betterAccPrune[ SN ][ ConsideringIntersections2[y][RelevantIndices2.index(SN)]][ i ] for SN in RelevantIndices2)
                             AccSum += min(Min1, Min2)
-                            print(u[i], min(Min1, Min2))
                     ## Adds the accuracy of the 1st region
                     for i in range(len(RelevantIndices1)):
                         AccSum += AccuracyData[RelevantIndices1[i]][ConsideringIntersections1[x][i]]
@@ -198,7 +195,6 @@ def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accura
                     ## Only continues to consider the region if it meets the accuracy threshold
                     if (AccSum > L * NSequences):
                         FinalIntersections.append(ConsideringIntersections1[x] + ConsideringIntersections2[y])
-                        print(ConsideringIntersections1[x] + ConsideringIntersections2[y])
                     else:
                         ThrownOutForAccuracy += 1
                 else:
@@ -236,7 +232,6 @@ def AccSort(infilename, outfilename, AccuracyData):
         RelevantIndices[i] = eval(RelevantIndices[i])
     AccValue = []
     for i in range(len(ConsideringIntersections)):
-        print(str(i))
         AccValue.append(0)
         for j in range(len(ConsideringIntersections[i])):
             AccValue[i] += AccuracyData[RelevantIndices[j]][ConsideringIntersections[i][j]]
@@ -340,6 +335,7 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
 
         if (i % 100 == 0):
             needsUpdate = True
+            print("Starting region", i, "of", len(infile1data))
             
         if (needsUpdate):
             infile = open(Lfile, "r")
@@ -364,7 +360,6 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
         needsUpdate = False
 
         j = 0
-        print(i, infile1name)
         while (j < len(ConsideringIntersections2)):
             if (AccuracyIntersections1[i] + AccuracyIntersections2[j] < L * NSequences):
                 break
@@ -442,11 +437,11 @@ def createAccData(PolytopeList, Slices, AccuracyData, L):
             ThisIndexOrder.append( (AccuracyData[i][j], j) )
         ThisIndexOrder.sort(reverse=True)
         ThisIndexOrder = [r[1] for r in ThisIndexOrder]
-        print(ThisIndexOrder)
         IndexOrder.append(ThisIndexOrder)
         
     BetterAccPrune = []
     for x in range(0,NSequences):
+        print("Starting sequence", x, "of AccGen")
         BetterAccPrune.append({})
         infile = open("MergeData/" + str(x) + ".txt", "r")
         Considering = infile.readlines()
@@ -454,7 +449,6 @@ def createAccData(PolytopeList, Slices, AccuracyData, L):
         Considering = [eval(r.strip())[0] for r in Considering]
         for i in Considering:
             NewList = []
-            print(x,i)
             z = Slices[x][i]
             for j in range(0, NSequences):
                 PolytopePruneList = Slices[j]
@@ -479,7 +473,6 @@ def readAccData(PolytopeList, Slices, AccuracyData, L):
             ThisIndexOrder.append( (AccuracyData[i][j], j) )
         ThisIndexOrder.sort(reverse=True)
         ThisIndexOrder = [r[1] for r in ThisIndexOrder]
-        print(ThisIndexOrder)
         IndexOrder.append(ThisIndexOrder)
 
     BetterAccPruneData = []

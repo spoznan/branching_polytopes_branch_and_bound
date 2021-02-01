@@ -3,11 +3,6 @@ import collections
 import sys
 import os
 
-#execfile('NopctFile.py')
-#execfile('SuboptFile.py')
-exec(open("NopctFile.py").read())
-exec(open("SuboptFile.py").read())
-
 #AccuracyResult = collections.namedtuple("AccuracyResult", "accession_number organism sequence structure score_stats")
 
 #ScoreStats = collections.namedtuple("ScoreStats", "predicted_pairs true_pairs true_positives false_negatives false_positives")
