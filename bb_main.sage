@@ -13,7 +13,7 @@ exec(open("./Code/bb_algorithms.py").read())
 exec(open("./Code/bb_merge_alg.py").read())
 
 
-seq_list = "MaxAccuracyFiles/SplitTest.txt" #needs to be changed
+seq_list = "MaxAccuracyFiles/tRNA.txt" #needs to be changed
 
 ## Initializes Data files
 PolytopeList = InitializePolytopes(seq_list)
