@@ -8,3 +8,4 @@ Data/5S_50/*
 Data/5S_50/
 MergeData/*.txt
 AccData/*.txt
+*.sage.py
