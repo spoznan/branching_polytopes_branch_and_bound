@@ -20,4 +20,4 @@ To run, use the nn_main.sage script. For example:
 
 ## Data 
 
-We provide output data about the optimal region in '~/MergeData/FinalOutput.txt'.
+We provide output data about the optimal region in `~/MergeData/FinalOutput.txt`.
