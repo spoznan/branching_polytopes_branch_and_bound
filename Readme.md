@@ -18,6 +18,12 @@ To run, use the bb_main.sage script. For example:
 
 ```sage ~/bb_main.sage```
 
+This will find the optimal parameters for the sequences listed in the file specified as `seq_list` in the main code.
+The optimal parameters are the parameters achieving the best average accuracy value across the specified data set.
+The region containing those parameters will be specified in `~/MergeData/FinalOutput.txt`.
+Additionally, data about algorithm computations and runtimes will be listed in `~/MergeData/SummativeData.txt`.
+
 ## Data 
 
-We provide output data about the optimal region in `~/MergeData/FinalOutput.txt`.
+We are providing input data used for testing for 50 tRNA and 50 5S sequences that can be used to run the code.
+
