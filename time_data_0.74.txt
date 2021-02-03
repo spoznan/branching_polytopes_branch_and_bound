@@ -1,0 +1,11 @@
+tRNA run with L = 0.74
+sobj generation took roughly 11 hours (inserted manually by file dating)
+Started bb_main at 15:23:08, 02/01/21
+Started step_0 at 15:26:41, 02/01/21
+Finished step_0 at 16:48:47, 02/01/21
+Finished AccGen at 16:52:20, 02/01/21
+Finished normal merges at 17:50:15, 02/01/21
+Finished AccSort at 17:50:16, 02/01/21
+Finished bb_main at 17:52:46, 02/01/21
+Total time: 2h29m
+Total intersections: 8075233

@@ -19,14 +19,13 @@ exec(open("./Code/bb_algorithms.py").read())
 exec(open("./Code/bb_merge_alg.py").read())
 
 
-seq_list = "MaxAccuracyFiles/tRNA.txt" #needs to be changed
+seq_list = "MaxAccuracyFiles/SplitTest.txt" #needs to be changed
 
 ## Initializes Data files
 PolytopeList = InitializePolytopes(seq_list)
 Slices = OrderSlices(PolytopeList)
 AccuracyData = CreateAccuracyData(seq_list, PolytopeList, Slices)
 NameData = CreateNameData(seq_list)
-u = FindBounds(seq_list) # do we need this? Seems like not
 NSequences = len(PolytopeList)
 
 ## Imports the L value for lower bound on accuracy
@@ -50,6 +49,8 @@ timing_data = open("time_data.txt","a")
 timing_data.write("Started step_0 at " + str(time.strftime("%H:%M:%S, %D", time.localtime())) + "\n")
 timing_data.close()
 
+NumIntersections = _sage_const_0 
+
 ## Consider each region from each sequence
 ## Consider all regions it intersects from each sequence
 ## Take the highest accuracy value from the regions it intersects from each sequence and sum them together
@@ -70,7 +71,9 @@ for x in range(_sage_const_0 ,NSequences):
         for j in range(_sage_const_0 , NSequences):
             PolytopePruneList = Slices[j]
             k = _sage_const_0 
+            NumIntersections += _sage_const_1 
             while (k < len(IndexOrder[j]) and z.intersection(PolytopePruneList[IndexOrder[j][k]]).is_empty()):
+                NumIntersections += _sage_const_1 
                 k += _sage_const_1 
             if (k >= len(IndexOrder[j])):
                 break
@@ -84,6 +87,8 @@ for x in range(_sage_const_0 ,NSequences):
         outfile.write("[" + str(Considering[i]) + "]" + "\n")
     outfile.close()
 
+    ## Updates Index Order for the Sequence that was just processed
+    ## Only includes surviving regions
     ThisIndexOrder = []
     for j in Considering:
         ThisIndexOrder.append( (AccuracyData[x][j], j) )
@@ -92,6 +97,12 @@ for x in range(_sage_const_0 ,NSequences):
     ThisIndexOrder = [r[_sage_const_1 ] for r in ThisIndexOrder]
     IndexOrder[x] = ThisIndexOrder
     print(ThisIndexOrder)
+
+## Prints out summative data
+outfile = open("MergeData/SummativeData.txt", "a")
+outfile.write("Step0\n")
+outfile.write("Performed Intersections: " + str(NumIntersections) + "\n\n\n")
+outfile.close()
 
 timing_data = open("time_data.txt","a")
 timing_data.write("Finished step_0 at " + str(time.strftime("%H:%M:%S, %D", time.localtime())) + "\n")
@@ -107,13 +118,16 @@ timing_data.close()
 
 print("AccGen completed")
 
-## Start of main
+#Start of main
 
 x = "0"
 for i in range(_sage_const_1 , NSequences):
     x = x + "," + str(i)
 Considering = [x]
-while (len(Considering[_sage_const_0 ].split(",")) > _sage_const_2 ):
+## Creates queue for merge ordering so it behaves like binary tree
+## and finishes with sequences in order from 0 to n-1.
+cont = True
+while (cont):
     x = Considering.pop(_sage_const_0 )
     x = x.split(",")
     Len = (len(x) + _sage_const_1 ) // _sage_const_2 
@@ -125,32 +139,44 @@ while (len(Considering[_sage_const_0 ].split(",")) > _sage_const_2 ):
         z = z + "," + x[i]
     Considering.append(y)
     Considering.append(z)
+    cont = False
+    for i in Considering:
+        if len(i.split(",")) > _sage_const_2 :
+            cont = True
+    while (not cont and Considering[_sage_const_0 ].split(",")[_sage_const_0 ] != "0"):
+        Considering.append(Considering.pop(_sage_const_0 ))
+
+print(Considering)
 
 ## Joining to have necessary groups of two
 for i in Considering:
     if (len(i.split(",")) == _sage_const_2 ):
         x = i.split(",")[_sage_const_0 ]
         y = i.split(",")[_sage_const_1 ]
+        print("Starting merge of", x, "and", y)
         z = x + "," + y
         Merge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
               "MergeData/" + z + ".txt",
-              PolytopeList, Slices, AccuracyData, L, u, betterAccPrune)
+              PolytopeList, Slices, AccuracyData, L, betterAccPrune)
         
 
 while (len(Considering) > _sage_const_2 ):
-    print("Starting merge of", x, "and", y)
     x = Considering.pop(_sage_const_0 )
-    y = Considering.pop(_sage_const_0 )
-    z = x + "," + y
-    if (len(z.split(",")) >= _sage_const_10 ):
-        NewMerge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
-          "MergeData/" + z + ".txt",
-          PolytopeList, Slices, AccuracyData, L, u, betterAccPrune)
+    if (Considering[_sage_const_0 ].split(",")[_sage_const_0 ] != "0"):
+        y = Considering.pop(_sage_const_0 )
+        print("Starting merge of", x, "and", y)
+        z = x + "," + y
+        if (len(z.split(",")) >= _sage_const_10 ):
+            NewMerge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
+              "MergeData/" + z + ".txt",
+              PolytopeList, Slices, AccuracyData, L, betterAccPrune)
+        else:
+            Merge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
+              "MergeData/" + z + ".txt",
+              PolytopeList, Slices, AccuracyData, L, betterAccPrune)
+        Considering.append(z)
     else:
-        Merge("MergeData/" + x + ".txt", "MergeData/" + y + ".txt",
-          "MergeData/" + z + ".txt",
-          PolytopeList, Slices, AccuracyData, L, u, betterAccPrune)
-    Considering.append(z)
+        Considering.append(x)
 
 timing_data = open("time_data.txt","a")
 timing_data.write("Finished normal merges at " + str(time.strftime("%H:%M:%S, %D", time.localtime())) + "\n")
@@ -166,8 +192,12 @@ timing_data.close()
 
 print("Starting FinalMerge")
 
+RelIndices1 = [eval(i) for i in Considering[_sage_const_0 ].split(",")]
+RelIndices2 = [eval(i) for i in Considering[_sage_const_1 ].split(",")]
+
 FinalMerge("MergeData/S" + Considering[_sage_const_0 ] + ".txt", "MergeData/S" + Considering[_sage_const_1 ] + ".txt",
-           "MergeData/FinalOutput.txt", PolytopeList, Slices, AccuracyData, NameData, L)
+           "MergeData/FinalOutput.txt", PolytopeList, Slices, AccuracyData, NameData, L,
+           "Lfile.txt", RelIndices1, RelIndices2)
 
 timing_data = open("time_data.txt","a")
 timing_data.write("Finished bb_main at " + str(time.strftime("%H:%M:%S, %D", time.localtime())))

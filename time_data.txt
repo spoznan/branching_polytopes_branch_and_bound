@@ -1,12 +1,3 @@
-tRNA run with L = 0.74
-sobj generation took roughly 11 hours (inserted manually by file dating)
-Started bb_main at 23:28:04, 01/31/21
-Started step_0 at 23:31:31, 01/31/21
-Finished step_0 at 00:50:17, 02/01/21
-Finished AccGen at 00:53:46, 02/01/21
-Finished normal merges at 01:43:49, 02/01/21
-Finished AccSort at 01:43:50, 02/01/21
-ERRORS IN FinalMerge -> timing fragment here
-Started FinalMerge at 13:12:41, 02/01/21
-Finished bb_main at 13:15:20, 02/01/21
-Overall took roughly 2h20m not including sobj generation
+mixed 5x 5S + 15x tRNA, L = 0.648
+Started bb_main at 21:39:07, 02/02/21
+Started step_0 at 21:42:36, 02/02/21

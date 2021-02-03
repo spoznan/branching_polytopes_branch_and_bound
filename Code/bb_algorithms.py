@@ -4,22 +4,6 @@ import subprocess
 import csv
 import os
 
-## Reads in max accuracy data for sequences 
-def FindBounds(AccuracyValuesFileName):
-    ## AccuracyValuesFileName.txt format:
-        ## Aquifex.aeolicus.VF5_AE000657 = 1
-        ## arabidopsis.thaliana_AC006340 = 0.930232558
-        ## ...
-
-    AccuracyFile = open(AccuracyValuesFileName)
-    RawData = AccuracyFile.readlines()
-    AccuracyFile.close()    
-    u = []
-    for i in RawData:
-        u.append(eval(i.split(" = ")[1]))
-    
-    return u
-
 def InitializePolytopes(AccuracyValuesFileName):
     ## Reads in accuracy data
     AccuracyFile = open(AccuracyValuesFileName)

@@ -5,10 +5,11 @@
 ## infile2name is of the same form.
 ## outfilename is designed to be the combination of them
 
-def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyData, L, u, betterAccPrune):
+def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyData, L, betterAccPrune):
     NSequences = len(PolytopeList)
     ThrownOutForAccuracy = 0
     ThrownOutForNonIntersect = 0
+    NumIntersections = 0
 
     ## Reads in raw data
     infile1 = open(infile1name,"r")
@@ -44,6 +45,7 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
         z = Slices[RelevantIndices1[0]][ConsideringIntersections1[i][0]]
         for j in range(1,len(ConsideringIntersections1[i])):
             z = z.intersection(Slices[RelevantIndices1[j]][ConsideringIntersections1[i][j]])
+            NumIntersections += 1
         PolytopeList1.append(z)
 
     PolytopeList2 = []
@@ -51,6 +53,7 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
         z = Slices[RelevantIndices2[0]][ConsideringIntersections2[i][0]]
         for j in range(1,len(ConsideringIntersections2[i])):
             z = z.intersection(Slices[RelevantIndices2[j]][ConsideringIntersections2[i][j]])
+            NumIntersections += 1
         PolytopeList2.append(z)
 
     ## Calculates Main
@@ -60,6 +63,7 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
             print("Starting region", x, "of", len(PolytopeList1))
         for y in range(len(PolytopeList2)):
             ## Checks to see if the two regions being considered intersect
+            NumIntersections += 1
             if (not PolytopeList1[x].intersection(PolytopeList2[y]).is_empty()):
                 ## Starts accuracy sum for the best possible accuracy for all polytopes not currently being considered
                 AccSum = 0
@@ -94,15 +98,17 @@ def Merge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyD
     outfile.write(infile1name + " and " + infile2name + "\n")
     outfile.write("Thrown out for Accuracy: " + str(ThrownOutForAccuracy) + "\n")
     outfile.write("Thrown out for Non-Intersect: " + str(ThrownOutForNonIntersect) + "\n")
+    outfile.write("Performed Intersections: " + str(NumIntersections) + "\n")
     outfile.write("Length of join: " + str(len(FinalIntersections)) + "\n\n\n")
     outfile.close()
     
     return
 
-def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyData, L, u, betterAccPrune):
+def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyData, L, betterAccPrune):
     NSequences = len(PolytopeList)
     ThrownOutForAccuracy = 0
     ThrownOutForNonIntersect = 0
+    NumIntersections = 0
 
     ## Reads in raw data
     infile1 = open(infile1name,"r")
@@ -159,6 +165,7 @@ def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accura
             for j in range(len(BRegions)): # Sequence Number (j) of File B
                 IntersectionMatrix[m][i].append({})
                 for k in BRegions[j]: # Region Number (k) of Sequence j of File B
+                    NumIntersections += 1
                     IntersectionMatrix[m][i][j][k] = z.intersection(Slices[RelevantIndices2[j]][k]).is_empty()
                     if (IntersectionMatrix[m][i][j][k]):
                         NTrue += 1
@@ -175,8 +182,10 @@ def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accura
             if (intersects(ConsideringIntersections1[x], ConsideringIntersections2[y])):
                 z = Slices[RelevantIndices1[0]][ConsideringIntersections1[x][0]]
                 for k in range(1, len(ConsideringIntersections1[x])):
+                    NumIntersections += 1
                     z = z.intersection(Slices[RelevantIndices1[k]][ConsideringIntersections1[x][k]])
                 for k in range(0, len(ConsideringIntersections2[y])):
+                    NumIntersections += 1
                     z = z.intersection(Slices[RelevantIndices2[k]][ConsideringIntersections2[y][k]])
                 if (not z.is_empty()):
                     ## Starts accuracy sum for the best possible accuracy for all polytopes not currently being considered
@@ -214,6 +223,7 @@ def NewMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accura
     outfile.write(infile1name + " and " + infile2name + "\n")
     outfile.write("Thrown out for Accuracy: " + str(ThrownOutForAccuracy) + "\n")
     outfile.write("Thrown out for Non-Intersect: " + str(ThrownOutForNonIntersect) + "\n")
+    outfile.write("Performed Intersections: " + str(NumIntersections) + "\n")
     outfile.write("Length of join: " + str(len(FinalIntersections)) + "\n\n\n")
     outfile.close()
     
@@ -254,8 +264,7 @@ def intersects(x,y):
     
 def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, AccuracyData, NameData, L, Lfile, RelevantIndices1, RelevantIndices2):
     NSequences = len(PolytopeList)
-    ThrownOutForAccuracy = 0
-    ThrownOutForNonIntersect = 0
+    NumIntersections = 0
 
     ## Reads in raw data
     infile1 = open(infile1name,"r")
@@ -313,6 +322,7 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
             for j in range(len(BRegions)): # Sequence Number (j) of File B
                 IntersectionMatrix[m][i].append({})
                 for k in BRegions[j]: # Region Number (k) of Sequence j of File B
+                    NumIntersections += 1
                     IntersectionMatrix[m][i][j][k] = z.intersection(Slices[RelevantIndices2[j]][k]).is_empty()
                     if (IntersectionMatrix[m][i][j][k]):
                         NTrue += 1
@@ -367,8 +377,10 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
                 ## Check if intersection is non-empty
                 z = Slices[RelevantIndices1[0]][ConsideringIntersections1[i][0]]
                 for k in range(1, len(ConsideringIntersections1[i])):
+                    NumIntersections += 1
                     z = z.intersection(Slices[RelevantIndices1[k]][ConsideringIntersections1[i][k]])
                 for k in range(0, len(ConsideringIntersections2[j])):
+                    NumIntersections += 1
                     z = z.intersection(Slices[RelevantIndices2[k]][ConsideringIntersections2[j][k]])
                 if (not z.is_empty()):
                     L = (AccuracyIntersections1[i] + AccuracyIntersections2[j]) / NSequences
@@ -379,6 +391,13 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
                     break
             j += 1
         i += 1
+
+    ## Prints out summative data
+    outfile = open("MergeData/SummativeData.txt", "a")
+    outfile.write("Final Merge\n")
+    outfile.write("Performed Intersections: " + str(NumIntersections) + "\n\n\n")
+    outfile.close()
+    
     outfile = open(outfilename, "w")
     outfile.write("Accuracy: "  + str(L) + "\n")
     outfile.write(str(CurrentBest) + "\n")
@@ -429,6 +448,7 @@ def FinalMerge(infile1name, infile2name, outfilename, PolytopeList, Slices, Accu
 
 def createAccData(PolytopeList, Slices, AccuracyData, L):
     NSequences = len(PolytopeList)
+    NumIntersections = 0
     
     IndexOrder = []
     for i in range(0,NSequences):
@@ -453,14 +473,23 @@ def createAccData(PolytopeList, Slices, AccuracyData, L):
             for j in range(0, NSequences):
                 PolytopePruneList = Slices[j]
                 k = 0
+                NumIntersections += 1
                 while (z.intersection(PolytopePruneList[IndexOrder[j][k]]).is_empty()):
                     k += 1
+                    NumIntersections += 1
                 NewList.append(AccuracyData[j][IndexOrder[j][k]])
             BetterAccPrune[x][i] = NewList
             outfile = open("AccData/" + str(x) + "," + str(i) + ".txt", "w")
             for j in BetterAccPrune[x][i]:
                 outfile.write(str(j) + "\n")
             outfile.close()
+
+    ## Prints out summative data
+    outfile = open("MergeData/SummativeData.txt", "a")
+    outfile.write("AccGen\n")
+    outfile.write("Performed Intersections: " + str(NumIntersections) + "\n\n\n")
+    outfile.close()
+    
     return(BetterAccPrune)
 
 def readAccData(PolytopeList, Slices, AccuracyData, L):
