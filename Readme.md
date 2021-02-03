@@ -3,7 +3,7 @@
 ## Description
 
 This repository contains the scripts created for the RNA Brancing parameters project as well as the resulting data. 
-`bb_main.sage` is the main script. The input for various sequences are in the `Data` folder.
+`bb_main.sage` is the main script. The input for various sequences are in the `~/Data` folder.
 Output will be placed in the 
 For more details, please see the associated paper (link will be made available).
 
@@ -14,7 +14,7 @@ work with Sagemath 9.2 and Python 3.7, although they likely are functional with 
 
 ## Usage
 
-To run, use the nn_main.sage script. For example:
+To run, use the bb_main.sage script. For example:
 
 ```sage ~/bb_main.sage```
 
