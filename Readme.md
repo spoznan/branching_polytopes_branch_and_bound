@@ -1,4 +1,4 @@
-# Scripts and Data for accompanying the article 'Improving RNA branching predictions: advances and limitations' by Svetlana Poznanovic ́, Carson Wood 1, Michael Cloer, Christine E. Heitsch
+# Scripts and Data accompanying the article 'Improving RNA branching predictions: advances and limitations' by Svetlana Poznanovic ́, Carson Wood 1, Michael Cloer, Christine E. Heitsch
 
 ## Description
 
