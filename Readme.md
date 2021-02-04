@@ -1,16 +1,14 @@
-# Scripts and Data accompanying the article 'Improving RNA branching predictions: advances and limitations' by Svetlana Poznanovic ́, Carson Wood, Michael Cloer, and Christine E. Heitsch
+# Scripts and Data for branch-and-bound on branching polytopes
 
 ## Description
 
-This repository contains the scripts created for the RNA Brancing parameters project as well as the resulting data. 
-`bb_main.sage` is the main script. The input for various sequences are in the `~/Data` folder.
-Output will be placed in the 
-For more details, please see the associated paper (link will be made available).
+This repository contains the code and data used for the article 'Improving RNA branching predictions: advances and limitations' by Svetlana Poznanovic ́, Carson Wood, Michael Cloer, and Christine E. Heitsch (link will be made available). 
+
 
 ## Dependencies
 
 These scripts are written for SageMath in accompaniement with Python 3. They are known to 
-work with Sagemath 9.2 and Python 3.7, although they likely are functional with earlier versions. 
+work with SageMath 9.2 and Python 3.7, although they likely are functional with earlier versions too. 
 
 ## Usage
 
@@ -25,5 +23,5 @@ Additionally, data about algorithm computations and runtimes will be listed in `
 
 ## Data 
 
-We are providing input data used for testing for 50 tRNA and 50 5S sequences that can be used to run the code.
+We are providing input data used for testing for 50 tRNA and 50 5S sequences that can be used to run the code in the `~/Data` folder. These include the branching polytopes in the `.rnapoly` files computed using the [pmfe](https://github.com/gtDMMB/pmfe) and the optimal structures computed for all vertices of the branching polytopes.
 
