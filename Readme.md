@@ -23,5 +23,5 @@ Additionally, data about algorithm computations and runtimes will be listed in `
 
 ## Data 
 
-We are providing input data for 50 tRNA and 50 5S rRNA sequences that were used for training. The data files include the primary sequences, the pseudo-knot free secondary structures, the branching polytopes in the `.rnapoly` files computed using the [pmfe](https://github.com/gtDMMB/pmfe), and the optimal structures computed for all vertices of the branching polytopes.
+We are providing input data for 50 tRNA and 50 5S rRNA sequences that were used for training. The data files include the primary sequences, the pseudoknot-free secondary structures, the branching polytopes in the `.rnapoly` files computed using the [pmfe](https://github.com/gtDMMB/pmfe), and the optimal structures computed for all vertices of the branching polytopes.
 
